@@ -1,0 +1,110 @@
+Application
+===========
+   Path and name: C:\Sistemas Fivewin\ConsCadNFe\ConsCadNFe.EXE (32 bits)
+   Size: 1,732,608 bytes
+   Time from start: 0 hours 0 mins 28 secs 
+   Error occurred at: 08/04/16, 11:05:55
+   Error description: Error BASE/1099  Argument error: STR
+   Args:
+     [   1] = C   11:05:55
+     [   2] = U   
+     [   3] = U   
+
+Stack Calls
+===========
+   Called from:  => STR(0)
+   Called from: C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG => TRANSMITEXMLSOAP(354)
+   Called from: C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG => CONSCAD(125)
+   Called from: C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG => MAIN(92)
+
+System
+======
+   CPU type: Intel(R) Core(TM) i3-3240 CPU @ 3.40GHz 3400 Mhz
+   Hardware memory: 1600 megs
+
+   Free System resources: 90 %
+        GDI    resources: 90 %
+        User   resources: 90 %
+
+   Compiler version: xHarbour build 1.2.1 Intl. (SimpLex) (Rev. 6715)
+   FiveWin  Version: FWHX 11.07
+   Windows version: 6.1, Build 7601 Service Pack 1
+
+   Windows total applications running: 15
+      1 , C:\Program Files\Adobe\Acrobat Reader DC\Reader\AcroCEF\RdrCEF.exe
+      2 , C:\Program Files\Avira\AntiVir Desktop\avgnt.exe
+      3 , C:\Program Files\Google\Chrome\Application\chrome.exe
+      4 , C:\Windows\Explorer.EXE
+      5 , C:\Windows\system32\notepad.exe
+      6 AcroMissingCompWClass, C:\Program Files\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe
+      7 Avira Launcher, C:\Program Files\Avira\Launcher\Avira.Systray.exe
+      8 CiceroUIWndFrame, C:\Windows\system32\taskhost.exe
+      9 DWM Notification Window, C:\Windows\system32\Dwm.exe
+     10 HotKey Listener, C:\Windows\system32\igfxHK.exe
+     11 Módulo principal, C:\xDevStudio\xDevStudio.exe
+     12 NvGameStreamMessageHandlerWindow, 
+     13 Resgistro de certificados EnterSafe - ePass2003, C:\Program Files\EnterSafe\ePass2003\ePassCertd_2003.exe
+     14 The Event Manager - Status, C:\Windows\system32\igfxEM.exe
+     15 igfxtrayWindow, C:\Windows\system32\igfxTray.exe
+
+Variables in use
+================
+   Procedure     Type   Value
+   ==========================
+   STR
+     Param   1:    C    "11:05:55"
+     Local   1:    U    
+     Local   2:    U    
+   TRANSMITEXMLSOAP
+     Local   1:    C    "https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx"
+     Local   2:    C    "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro2"
+     Local   3:    C    "<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Header><nfeCabecMsg xmlns="http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro2"><versaoDados>2.00</versaoDados><cUF>43</cUF></nfeCabecMsg></soap:Header><soap:Body><nfeDadosMsg xmlns="http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro2"><ConsCad xmlns="http://www.portalfiscal.inf.br/nfe" versao="2.00"><infCons><xServ>CONS-CAD</xServ><UF>RS</UF><CNPJ>02370420000195</CNPJ></infCons></ConsCad></nfeDadosMsg></soap:Body></soap:Envelope>"
+     Local   4:    O    Class: TOLEAUTOX
+     Local   5:    O    Class: TOLEAUTOX
+     Local   6:    H    {=>}
+     Local   7:    U    
+     Local   8:    U    
+     Local   9:    C    "C:\Sistemas Fivewin\ConsCadNFe\Envio\ConsultaCad08/04/16"
+   CONSCAD
+     Local   1:    H    {=>}
+   MAIN
+     Local   1:    L    .T.
+
+Linked RDDs
+===========
+   DBF
+   DBFFPT
+   DBFBLOB
+   DBFNTX
+
+DataBases in use
+================
+
+Classes in use:
+===============
+     1 ERROR
+     2 HASHENTRY
+     3 HBCLASS
+     4 HBOBJECT
+     5 TWINDOW
+     6 TDIALOG
+     7 TBRUSH
+     8 TCONTROL
+     9 TSAY
+    10 TGET
+    11 GET
+    12 TCLIPGET
+    13 TBUTTON
+    14 TFONT
+    15 TRECT
+    16 TOLEAUTOX
+    17 TREG32
+
+Memory Analysis
+===============
+      143 Static variables
+
+   Dynamic memory consume:
+      Actual  Value:          0 bytes
+      Highest Value:          0 bytes
+

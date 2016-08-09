@@ -1,0 +1,614 @@
+	#include "Fivewin.ch"
+	#include "common.ch"
+	#include "hbxml.ch"
+
+   #define _CAPICOM_STORE_OPEN_READ_ONLY                 0           // Somente Smart Card em Modo de Leitura
+   #define _CAPICOM_MEMORY_STORE                         0
+   #define _CAPICOM_LOCAL_MACHINE_STORE                  1
+   #define _CAPICOM_CURRENT_USER_STORE                   2
+   #define _CAPICOM_ACTIVE_DIRECTORY_USER_STORE          3
+   #define _CAPICOM_SMART_CARD_USER_STORE                4
+   #define _CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED           2
+   #define _CAPICOM_CERTIFICATE_FIND_SHA1_HASH           0           // Retorna os Dados Criptografados com Hash SH1
+   #define _CAPICOM_CERTIFICATE_FIND_EXTENDED_PROPERTY   6
+   #define _CAPICOM_CERTIFICATE_FIND_TIME_VALID          9           // Retorna Certificados Válidos
+   #define _CAPICOM_CERTIFICATE_FIND_KEY_USAGE           12          // Retorna Certificados que contém dados.
+   #define _CAPICOM_DIGITAL_SIGNATURE_KEY_USAGE          0x00000080  // Permitir o uso da Chave Privada para assinatura Digital
+   #define _CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME 0           // Este atributo contém o tempo em que a assinatura foi criada.
+   #define _CAPICOM_INFO_SUBJECT_SIMPLE_NAME             0           // Retorna o nome de exibição do certificado.
+   #define _CAPICOM_ENCODE_BASE64                        0           // Os dados são guardados como uma string base64-codificado.
+   #define _CAPICOM_E_CANCELLED                          -2138568446 // A operação foi cancelada pelo usuário.
+   #define _CERT_KEY_SPEC_PROP_ID                        6
+   #define _CAPICOM_CERT_INFO_ISSUER_EMAIL_NAME          0
+   #define _SIG_KEYINFO                                  0 // 0 - NOKEYINFO ; 1- KEYVALUE ; 2- CERTIFICATES ; 4- PURGE
+   #define _CAPICOM_HASH_ALGORITHM_SHA1                  0 // algoritmo de criptografia SHA-1
+    
+   #define DC_CALL_STD  0x0020
+
+* Consulta Cadastro de Contribuintes de ICMS
+* Data: 03/08/2016
+* Eduardo P. Sales
+
+STATIC strXML, oCNPJ, oCPF, oIE, oUF, oFileXSD, cSerialCert
+
+********************************************************************************
+FUNCTION MAIN()
+	
+	LOCAL lOk:= .F.
+	
+	IF MsgYesNo("Consultar por CNPJ?", "CCC-e")
+
+	   oCNPJ:= SPACE(14)
+		MsgGet("CCC-e", "Informe o CNPJ:", @oCNPJ)
+		IF Empty(oCNPJ)
+			MsgStop("CNPJ não informado!", "Erro")
+			RETURN NIL
+		ELSE
+			lOk:= .T.	
+		ENDIF	
+	ENDIF
+	
+	IF ! lOk
+	
+		IF MsgYesNo("Consultar por CPF?", "CCC-e")
+
+		   oCPF:= SPACE(11)
+			MsgGet("CCC-e", "Informe o CPF:", @oCPF)
+			IF Empty(oCPF)
+				MsgStop("CPF não informado!", "Erro")
+				RETURN NIL
+			ELSE
+				lOk:= .T.	
+			ENDIF	
+		ENDIF
+	
+	ENDIF
+	
+	IF ! lOk
+	
+		IF MsgYesNo("Consultar por IE?", "CCC-e")
+
+		   oIE:= SPACE(10)
+			MsgGet("CCC-e", "Informe a IE:", @oIE)
+			IF Empty(oIE)
+				MsgStop("IE não informada!", "Erro")
+				RETURN NIL
+			ELSE
+				lOk:= .T.	
+			ENDIF	
+		ENDIF
+	
+	ENDIF
+	
+	IF lOk
+	
+		oUF:= SPACE(02)
+		MSgGet("CCC-e", "Informe a UF:", @oUF)
+		IF Empty(oUF)
+			MSgStop("UF não informada!", "Erro")
+			RETURN NIL
+		ENDIF	
+	
+		ConsCad()
+	
+	ENDIF
+	
+	
+RETURN NIL
+
+********************************************************************************
+FUNCTION ConsCad()
+	* monta o xml e transmite para o WS
+	LOCAL aResVal:= HASH()
+	
+	strXML:= ""
+	oFileXSD:= CurDrive()+":\"+CurDir()+"\Schemas\consCad_v2.00.xsd" // arquivo xsd para validacao
+	
+   strXML+= '<ConsCad xmlns="http://www.portalfiscal.inf.br/nfe" versao="2.00">'
+   strXML+= 	'<infCons>'
+   strXML+= 		'<xServ>CONS-CAD</xServ>'
+   strXML+=			'<UF>'+ oUF	+'</UF>'
+   strXML+=			IF(!Empty(oIE),   '<IE>'+ Alltrim(oIE) +'</IE>', '')
+   strXML+=			IF(!Empty(oCNPJ), '<CNPJ>'+ oCNPJ +'</CNPJ>', '')
+   strXML+=			IF(!Empty(oCPF),  '<CPF>' + oCPF  +'</CPF>' , '')	
+   strXML+= 	'</infCons>'
+   strXML+= '</ConsCad>'
+	
+	* valida o XML
+//   aResVal:= ValidaXML(oFileXSD)
+//   IF ! aResVal["STATUS"]
+//		MsgStop(aResVal["MSG"], "Erro")
+//		RETURN NIL
+//   ENDIF
+   
+   * transmite
+   TransmiteXMLSOAP()
+   
+   
+RETURN NIL
+
+********************************************************************************
+FUNCTION ValidaXML(oFileXSD) 
+
+    //-- Valida o arquivo XML
+    
+    LOCAL oDOMDoc
+    LOCAL oSchema
+    LOCAL ParseError
+
+    LOCAL aRETORNO        := HASH()
+    LOCAL cSchemaFilename := ''
+    LOCAL oError                 
+
+    aRETORNO['STATUS'] := .F.
+    aRETORNO['MSG']    := ''
+
+
+	 IF oFileXSD == NIL
+       aRETORNO['MSG'] := 'Arquivo XSD não informado.'
+       RETURN aRETORNO
+    ENDIF
+	 
+    //-- carregar o MSXML para o schema do XML
+    
+    cSchemaFilename := oFileXSD
+
+    TRY
+       oDOMDoc := xhb_CreateObject( 'MSXML2.DOMDocument.5.0' )  
+    CATCH
+       aRETORNO['MSG'] := 'Não foi possível carregar o MSXML para validação do XML.'
+       RETURN(aRETORNO)
+    END
+
+    TRY
+       oDOMDoc:async              := .T.
+       oDOMDoc:resolveExternals   := .T.
+       oDOMDoc:validateOnParse    := .T.
+       oDOMDoc:preserveWhiteSpace := .T.
+       oDOMDoc:LoadXML(strXML)
+    CATCH
+       aRETORNO['MSG'] := 'Não foi possível carregar o arquivo XML para a validação.'
+       RETURN(aRETORNO)
+    END
+
+    IF oDOMDoc:parseError:errorCode <> 0 
+       aRETORNO['MSG'] := 'Não foi possível carregar o documento pois ele não corresponde ao seu Schema'                                         + HB_OsNewLine() +;
+                          'Linha: '                                                                     + STR(oDOMDoc:parseError:line)           + HB_OsNewLine() +;
+                          'Caractere na linha: '                                                        + STR(oDOMDoc:parseError:linepos)        + HB_OsNewLine() +;
+                          'Causa do erro: '                                                             + oDOMDoc:parseError:reason              + HB_OsNewLine() +;
+                          'Code: '                                                                      + STR(oDOMDoc:parseError:errorCode)
+      RETURN(aRETORNO)
+    ENDIF
+
+    TRY
+       oSchema := xhb_CreateObject( 'MSXML2.XMLSchemaCache.5.0' )
+    CATCH
+       aRETORNO['MSG'] := 'Não foi possível carregar o MSXML para o schema do XML.'
+       RETURN(aRETORNO)
+    END
+
+    IF ! FILE(cSchemaFilename)
+      aRETORNO['MSG'] := 'Arquivo do schema não encontrado ' + cSchemaFilename
+      RETURN(aRETORNO)
+    ENDIF
+
+    TRY
+
+	   oSchema:add('http://www.portalfiscal.inf.br/nfe',cSchemaFilename )
+
+    CATCH oError
+       aRETORNO['MSG'] := 'Falha '                                              + HB_OsNewLine() +;
+                          'Error: '     + Transform(oError:GenCode  ,nil) + ';' + HB_OsNewLine() +;
+                          'SubC: '      + Transform(oError:SubCode  ,nil) + ';' + HB_OsNewLine() +;
+                          'OSCode: '    + Transform(oError:OsCode   ,nil) + ';' + HB_OsNewLine() +;
+                          'SubSystem: ' + Transform(oError:SubSystem,nil) + ';' + HB_OsNewLine() +;
+                          'Mensagem: ' + oError:Description
+      RETURN(aRETORNO)
+    END
+
+    oDOMDoc:Schemas := oSchema
+    ParseError      := oDOMDoc:validate
+
+    IF ParseError:errorCode <> 0
+       aRetorno['nResult']  := ParseError:errorCode
+       aRETORNO['MSG']      := ParseError:reason
+       RETURN(aRetorno)
+    ENDIF
+
+    oDOMDoc    := NIL
+    ParseError := NIL
+    oSchema    := NIL
+
+
+*    aRETORNO['XML']    := cXml
+    aRETORNO['STATUS'] := .T.
+
+RETURN(aRETORNO)
+
+********************************************************************************
+FUNCTION TransmiteXMLSOAP()
+	* Transmite o XML para o WebService via SOAP Message
+	
+	LOCAL cLinkWS, cMethod, cEnv, oServerWS, oDOMDoc, cStat, xMotivo
+	LOCAL aRet:= HASH()
+	
+  * cLinkWS := "https://cad.sefazrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx"
+   cLinkWS := 	"https://nfe.fazenda.sp.gov.br/ws/cadconsultacadastro2.asmx"
+    	
+	* CNPJ para teste: 02808866000159
+	
+   cMethod := "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro2"
+	cSOAPAct:= "http://www.portalfiscal.inf.br/nfe/wsdl/CadConsultaCadastro2/consultaCadastro2"
+
+	* envelopamento do XML
+	cEnv:=""
+	cEnv += '<?xml version="1.0" encoding="utf-8"?>'
+   cEnv += '<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+   cEnv +=   '<soap:Header>'
+   cEnv +=     '<nfeCabecMsg xmlns="'+ cMethod +'">'
+   cEnv +=       '<versaoDados>'+ "2.00" +'</versaoDados>'
+   cEnv +=       '<cUF>'+ "43" +'</cUF>'
+   cEnv +=     '</nfeCabecMsg>'
+   cEnv +=   '</soap:Header>'
+   cEnv +=   '<soap:Body>'
+   cEnv +=     '<nfeDadosMsg xmlns="'+ cMethod +'">'
+   cEnv +=       strXML 
+   cEnv +=     '</nfeDadosMsg>'
+   cEnv +=   '</soap:Body>'
+   cEnv += '</soap:Envelope>'
+
+	
+	* Seleciona o certificado 
+	aRet:= SelectCertificado()
+	IF !aRet["STATUS"]
+		MsgStop(aRet["MSG"], "Erro")
+		RETURN NIL
+	ENDIF		
+	
+
+	* Obtem CN do certificado 	
+	TRY
+		cCERT := GetCNCertificado()
+	CATCH
+		MsgStop("Não foi possível obter informações do certificado digital", "Erro")
+		RETURN NIL
+	END
+	
+
+	* abre conexao com webservice
+   TRY
+
+       oServerWS := xhb_CreateObject( 'MSXML2.ServerXMLHTTP.6.0' )  
+
+       oServerWS:setOption( 3, 'CURRENT_USER\MY\'+cCERT )
+       oServerWS:open('POST', cLinkWS, .f.)
+       oServerWS:setRequestHeader('SOAPAction'      , cSOAPAct)
+       oServerWS:setRequestHeader('Content-Type'    , 'text/xml; charset=utf-8')             // Obtém ou define o valor de cabeçalho de Content-type HTTP.
+       oServerWS:setRequestHeader('Content-Length:' , ALLTRIM(STR(LEN(cEnv))))               // Obtém ou define o cabeçalho de Content-length HTTP.
+
+   CATCH
+
+       MsgStop('Não foi possível inicializar a conexão do webservice', 'Erro')
+       RETURN NIL
+
+   END
+	
+    //-- carrega o xml
+
+    TRY
+
+       oDOMDoc:= xhb_CreateObject('MSXML2.DOMDocument.5.0') 
+       oDOMDoc:async              := .F.
+       oDOMDoc:resolveExternals   := .F.
+       oDOMDoc:validateOnParse    := .T.
+       oDOMDoc:preserveWhiteSpace := .T.
+
+       oDOMDoc:LoadXML(cEnv)
+
+    CATCH
+
+       MsgStop('Não foi possível carregar o documento XML', 'Erro')
+       RETURN NIL
+
+    END
+
+
+    IF oDOMDoc:parseError:errorCode <> 0
+       aRETORNO['MSG'] := 'Não foi possível carregar o documento pois ele não corresponde ao seu Schema'                                           + HB_OsNewLine() +;
+                          ' Linha: '                                                                     +STR(oDOMDoc:parseError:line)             + HB_OsNewLine() +;
+                          ' Caractere na linha: '                                                        +STR(oDOMDoc:parseError:linepos)          + HB_OsNewLine() +;
+                          ' Causa do erro: '                                                             +oDOMDoc:parseError:reason                + HB_OsNewLine() +;
+                          ' Code: '                                                                      +STR(oDOMDoc:parseError:errorCode)
+      RETURN(aRETORNO)
+    ENDIF
+
+    //-- envia o xml
+
+    TRY
+      oServerWS:send(oDOMDoc:xml)
+    CATCH e
+       MsgStop('Falha: Não foi possível conectar-se ao servidor, pois o mesmo está inativo ou inoperante.'                                                    + HB_OsNewLine() +;
+                          'Error: '                                                                                   + Transform(e:GenCode,nil)                    + ';' + HB_OsNewLine() +;
+                          'SubC: '                                                                                    + Transform(e:SubCode,nil)                    + ';' + HB_OsNewLine() +;
+                          'OSCode: '                                                                                  + Transform(e:OsCode,nil)                     + ';' + HB_OsNewLine() +;
+                          'SubSystem: '                                                                               + Transform(e:SubSystem,nil)                  + ';' + HB_OsNewLine() +;
+                          'Mensangem: '                                                                               + e:Description , 'Erro')
+      RETURN NIL
+    END
+
+	//-- aguarda o retorno
+	//-- valores do metodo [readyState] :
+	
+	//0: request not initialized
+	//1: server connection established
+	//2: request received
+	//3: processing request
+	//4: request finished and response is ready
+	
+	DO WHILE oServerWS:readyState <> 4
+		millisec(500)
+	ENDDO
+	
+	cStat:= xMotivo:= ""
+	XML_GetNode(oServerWS:responseText, "cStat", @cStat)
+	XML_GetNode(oServerWS:responseText, "xMotivo", @xMotivo)
+	 
+	IF cStat == "111" // Ok!
+	
+		* Grava o XML de envio
+		MEMOWRIT( CurDrive()+":\"+CurDir()+ "\Envio\" + 'ConsultaCad' + DTOC(DATE())+STRTRAN(TIME(), ":", "") +'.xml' , strXML , .F.)
+		
+		* Grava o XML de retorno
+		MEMOWRIT( CurDrive()+":\"+CurDir()+ "\Retorno\" + 'ConsultaCad_ret'+'.xml' , oServerWS:responseText , .F.)
+		
+		MsgInfo("Consulta realizada com sucesso!", "CCC-e")
+	
+	ELSE
+		MsgStop(cStat +" - "+ xMotivo, "Erro ao consultar cadastro")
+	ENDIF
+	
+RETURN NIL
+
+******************************************************************************   
+FUNCTION XML_GetNode(strRet, cCampo, cConteudo, l1Node)
+	* Le o arquivo de retorno do processamento do lote 	
+   * strRet -> string do arquivo xml
+   * cCampo -> Nome da tag
+	* cConteudo -> conteudo da tag a ser retornado
+	* l1Node -> Se procura ate encontrar o primeiro nó ou percorre o arquivo todo e retorna o vlr do ultimo encontrado
+   
+   Local hFile   , cXml
+   Local xmlDoc  , xmlIter 
+	Local xmlNode , cNode
+	Local oCampo  , oConteudo
+   
+   Default l1Node:= .F.
+   
+   If Empty(strRet) 
+      Msgstop("Arquivo XML não encontrado","Erro") 
+      Return Nil
+   Endif
+   
+   
+//   hFile   := MeMoRead( cFileName )
+   hFile  := strRet
+   
+   xmlDoc := TXmlDocument():New( hFile )
+   
+   If xmlDoc:nStatus != HBXML_STATUS_OK
+     Msgstop("Erro ao ler o XML")
+     Return Nil
+   Endif
+   
+   xmlIter := TXmlIterator():New( xmlDoc:oRoot )
+   xmlNode := xmlIter:Find()
+   
+   WHILE xmlNode != Nil
+
+		oCampo    := xmlNode:cName
+		oConteudo := xmlNode:cData
+      
+		If ! Empty(oCampo)
+			If Alltrim(oCampo) == Alltrim(cCampo)
+		   	cConteudo := oConteudo
+		   
+			 	IF l1Node
+					Exit
+			 	ENDIF
+			  	 
+			Endif
+		Endif
+
+		xmlNode := xmlIter:Next() //vai para o proximo campo
+   END
+   
+RETURN NIL	
+
+
+********************************************************************************
+* Funcoes CAPICOM para manuseio de certificado digital
+********************************************************************************
+FUNCTION SelectCertificado() 
+	 * Abre janela de selecao do certificado digital e registra dlls da Capicom
+    LOCAL oCertSelecao
+    LOCAL oCertificados
+    LOCAL oStore
+    LOCAL oCertificates
+
+    LOCAL msgErro  := ""
+    LOCAL aRetorno := hash()
+    LOCAL cMsgErro := ""
+
+   TRY
+     oCertificates := xhb_CreateObject( "CAPICOM.Certificates" )  
+   CATCH
+      UAC( 0 )
+      iif( file( "CAPICOM.DLL" ), RegisterServer( "CAPICOM.DLL" ), msgErro := "Nao foi instalado CAPICOM.DLL" )
+      UAC( 1 )
+      aRetorno['STATUS'] := .F.
+      aRetorno['MSG']    := IF(EMPTY(cMsgErro),"Registrado CAPICOM tente novamente",cMsgErro)
+      RETURN(aRetorno)
+   END
+
+   TRY
+     oStore := xhb_CreateObject("CAPICOM.Store") 
+   CATCH
+      UAC( 0 )
+      iif( file( "CAPICOM.DLL" ), RegisterServer( "CAPICOM.DLL" ), msgErro := "Nao foi instalado CAPICOM.DLL" )
+      UAC( 1 )
+      aRetorno['STATUS'] := .F.
+      aRetorno['MSG']    := IF(EMPTY(cMsgErro),"Registrado CAPICOM tente novamente",cMsgErro)
+      RETURN(aRetorno)
+   END
+
+	 TRY
+	   oStore:open(_CAPICOM_CURRENT_USER_STORE,'My',_CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED)
+	   oCertificados := oStore:Certificates() // Lista de Certificados
+	   oCertSelecao  := oCertificados:Select("Selecione o certificado para uso","Atenção",.F.)
+	
+	   IF oCertSelecao:Count() > 0
+	        aRetorno['STATUS']        := .T.
+	        aRetorno['Serial']        := oCertSelecao:Item(1):SerialNumber
+	        aRetorno['IssuerName']    := oCertSelecao:Item(1):IssuerName
+	        aRetorno['SubjectName']   := oCertSelecao:Item(1):SubjectName
+	        aRetorno['Thumbprint']    := oCertSelecao:Item(1):Thumbprint
+	        aRetorno['ValidFromDate'] := oCertSelecao:Item(1):ValidFromDate
+	        aRetorno['ValidToDate']   := oCertSelecao:Item(1):ValidToDate
+	        aRetorno['Version']       := oCertSelecao:Item(1):Version
+	        aRetorno['HasPrivateKey'] := oCertSelecao:Item(1):HasPrivateKey
+	        aRetorno['getInfo']       := oCertSelecao:Item(1):getInfo(0)
+	        cSerialCert := oCertSelecao:Item(1):SerialNumber
+	     ELSE
+	        aRetorno['STATUS'] := .F.
+	        aRetorno['MSG']    := "Nao conseguiu selecionar nenhum certificado"
+	   ENDIF
+	 CATCH
+	      aRetorno['STATUS'] := .F.
+	      aRetorno['MSG']    := "Nao conseguiu selecionar nenhum certificado"
+	      RETURN(aRetorno)
+	 END
+
+   oCertSelecao := Nil
+   oCertificados := Nil
+   oStore := Nil
+   oCertificates := Nil
+
+RETURN aRetorno
+
+********************************************************************************
+FUNCTION GetCNCertificado()
+  * Retorna CN do certificado
+  LOCAL oStore
+  LOCAL nI
+  LOCAL oCertificados
+  LOCAL cCN
+
+  LOCAL oResult      := Nil
+  LOCAL cSubjectName := ""
+
+  IF cSerialCert == NIL
+  	  MsgStop("S/N do certificado não encontrado!", "Erro")
+  	  RETURN cCN
+  ENDIF
+  
+
+  TRY
+     oStore := xhb_CreateObject( "CAPICOM.Store" ) 
+  CATCH
+  END
+
+  IF oStore == NIL
+     RETURN("")
+  ENDIF
+
+  oStore:open(_CAPICOM_CURRENT_USER_STORE,'My',_CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED)
+  oCertificados := oStore:Certificates()
+
+  FOR nI := 1 TO oCertificados:Count()
+     IF oCertificados:Item(nI):SerialNumber == cSerialCert
+        cSubjectName := oCertificados:Item(nI):SubjectName
+     ENDIF
+  NEXT
+
+  cCN := ""
+  FOR nI := AT("CN=",cSubjectName)+3 TO LEN(cSubjectName)
+     IF SUBS(cSubjectName,nI,1) == ","
+        EXIT
+     ENDIF
+     cCN += SUBS(cSubjectName,nI,1)
+  NEXT
+
+  oCertificados := Nil
+  oStore        := Nil
+  
+RETURN cCN
+
+********************************************************************************
+FUNCTION GetObjCertificado() 
+	* Retorna Obj do certificado selecionado
+	LOCAL oStore, oCertificados, oResult, nI
+	LOCAL SubjectName:=''
+	
+	TRY
+		oStore := xhb_CreateObject( "CAPICOM.Store" )
+	CATCH
+	   oResult := 'Certificado não identificado'
+	END
+	
+	oStore:Open(_CAPICOM_CURRENT_USER_STORE,'My',_CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED)
+	oCertificados:=oStore:Certificates()
+	
+	FOR nI=1 TO oCertificados:Count()
+	   IF !EMPTY( cSerialCert )
+	      IF oCertificados:Item(nI):SerialNumber == cSerialCert
+	         oResult := oCertificados:Item(nI)
+	         EXIT
+	      ENDIF
+	   ELSEIF !EMPTY( SubjectName )
+	      IF Upper( Alltrim(oCertificados:Item(nI):SubjectName) ) == SubjectName
+	         oResult := oCertificados:Item(nI)
+	         EXIT
+	      ENDIF
+	   ENDIF
+	NEXT
+	
+	oCertificados := Nil
+	oStore := Nil
+
+RETURN oResult
+
+********************************************************************************
+FUNCTION UAC(nValue) 
+
+   //-- Desabilita o UAC
+   //-- EnableLUA
+   //-- 0-Desativar
+   //-- 1-Ativar
+  // 
+   #ifdef __XHARBOUR__
+      SW_WriteToRegWin( "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA",nValue ) //  - nao funciona
+   #else
+      win_regWrite( "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA", nValue )
+   #endif
+
+RETURN 0
+
+********************************************************************************
+FUNCTION SW_WriteToRegWin( cChave,nValue )
+
+    *  Gravar no registro do windows
+
+	 /*
+    LOCAL nHandle
+
+    IF cChave <> NIL .AND. nValue <> NIL
+
+        RegOpenKey( 2147483650,cChave, @nHandle )  // xp
+        RegSetValue( 2147483650,cChave,nValue  )
+
+        RegCloseKey( nHandle )
+
+    ENDIF
+*/
+
+RETURN NIL

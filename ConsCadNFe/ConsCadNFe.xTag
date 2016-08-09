@@ -1,0 +1,74 @@
+<!--
+################################################
+# xDevStudio Project - xdev@kssoftware.com.br  #
+# Created @ 09/08/2016 11:48:49                #
+#                                              #
+### Standard xDev TagList - Layout v1.5 ########
+-->
+<taglist>
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="SW_WriteToRegWin" args="<cChave>, <nValue> " scope="PUBLIC" type="ptFunction" line="606">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="UAC" args="<nValue> " scope="PUBLIC" type="ptFunction" line="590">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="GetObjCertificado" args=" " scope="PUBLIC" type="ptFunction" line="556">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="GetCNCertificado" args=" " scope="PUBLIC" type="ptFunction" line="508">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="SelectCertificado" args=" " scope="PUBLIC" type="ptFunction" line="440">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="XML_GetNode" args="<strRet>, <cCampo>, <cConteudo>, <l1Node> " scope="PUBLIC" type="ptFunction" line="382">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="TransmiteXMLSOAP" args=" " scope="PUBLIC" type="ptFunction" line="228">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="ValidaXML" args="<oFileXSD> " scope="PUBLIC" type="ptFunction" line="130">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="ConsCad" args=" " scope="PUBLIC" type="ptFunction" line="99">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="MAIN" args=" " scope="PUBLIC" type="ptFunction" line="34">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="DC_CALL_STD" args=" " scope="STATIC" type="ptConstant" line="25">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_HASH_ALGORITHM_SHA1" args=" " scope="STATIC" type="ptConstant" line="23">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_SIG_KEYINFO" args=" " scope="STATIC" type="ptConstant" line="22">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_CERT_INFO_ISSUER_EMAIL_NAME" args=" " scope="STATIC" type="ptConstant" line="21">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CERT_KEY_SPEC_PROP_ID" args=" " scope="STATIC" type="ptConstant" line="20">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_E_CANCELLED" args=" " scope="STATIC" type="ptConstant" line="19">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_ENCODE_BASE64" args=" " scope="STATIC" type="ptConstant" line="18">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_INFO_SUBJECT_SIMPLE_NAME" args=" " scope="STATIC" type="ptConstant" line="17">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME" args=" " scope="STATIC" type="ptConstant" line="16">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_DIGITAL_SIGNATURE_KEY_USAGE" args=" " scope="STATIC" type="ptConstant" line="15">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_CERTIFICATE_FIND_KEY_USAGE" args=" " scope="STATIC" type="ptConstant" line="14">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_CERTIFICATE_FIND_TIME_VALID" args=" " scope="STATIC" type="ptConstant" line="13">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_CERTIFICATE_FIND_EXTENDED_PROPERTY" args=" " scope="STATIC" type="ptConstant" line="12">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_CERTIFICATE_FIND_SHA1_HASH" args=" " scope="STATIC" type="ptConstant" line="11">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED" args=" " scope="STATIC" type="ptConstant" line="10">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_SMART_CARD_USER_STORE" args=" " scope="STATIC" type="ptConstant" line="9">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_ACTIVE_DIRECTORY_USER_STORE" args=" " scope="STATIC" type="ptConstant" line="8">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_CURRENT_USER_STORE" args=" " scope="STATIC" type="ptConstant" line="7">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_LOCAL_MACHINE_STORE" args=" " scope="STATIC" type="ptConstant" line="6">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_MEMORY_STORE" args=" " scope="STATIC" type="ptConstant" line="5">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\MAIN.PRG" name="_CAPICOM_STORE_OPEN_READ_ONLY" args=" " scope="STATIC" type="ptConstant" line="4">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="xhb_CreateObject" args=" " scope="PUBLIC" type="ptFunction" line="8">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="xhb_GetActiveObject" args="<cString> " scope="PUBLIC" type="ptFunction" line="11">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="xhb_CreateObject" args="<cString>, <cLicense> " scope="PUBLIC" type="ptFunction" line="23">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="xhb_GetActiveObject" args="<cString> " scope="PUBLIC" type="ptFunction" line="29">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="ForceSymbols" args=" " scope="PUBLIC" type="ptFunction" line="50">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="New" args="<uObj>, <cClass> " scope="PUBLIC" type="ptMethod" line="60">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="Release" args=") <CLASS><TOleAutoX> " scope="PUBLIC" type="ptProcedure" line="130">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="GetActiveObject" args="<cClass> " scope="PUBLIC" type="ptMethod" line="139">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="Invoke" args="<.><.><.> " scope="PUBLIC" type="ptMethod" line="190">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="Collection" args="<xIndex>, <xValue> " scope="PUBLIC" type="ptMethod" line="197">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OLE_INITIALIZE" args=" " scope="PUBLIC" type="ptFunction" line="266">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OLE_UNINITIALIZE" args=" " scope="PUBLIC" type="ptFunction" line="277">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="DateToDbl" args="<cDate> " scope="PUBLIC" type="ptCFunction" line="283">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="DblToDate" args="<nDate> " scope="PUBLIC" type="ptCFunction" line="294">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="AnsiToSysString" args="<cString> " scope="PUBLIC" type="ptCFunction" line="306">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="WideToAnsi" args="<wString> " scope="PUBLIC" type="ptCFunction" line="324">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="GetParams" args="<pDispParams> " scope="PUBLIC" type="ptCFunction" line="348">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="FreeParams" args="<pDispParams> " scope="PUBLIC" type="ptCFunction" line="574">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="RetValue" args=" " scope="PUBLIC" type="ptCFunction" line="715">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="WOLESHOWEXCEPTION" args=" " scope="PUBLIC" type="ptFunction" line="899">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OLEEXCEPTIONSOURCE" args=" " scope="PUBLIC" type="ptFunction" line="917">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OLEEXCEPTIONDESCRIPTION" args=" " scope="PUBLIC" type="ptFunction" line="930">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="WOLEERROR" args=" " scope="PUBLIC" type="ptFunction" line="943">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="WOle2TxtError" args=" " scope="PUBLIC" type="ptCFunction" line="950">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="WOLE2TXTERROR" args=" " scope="PUBLIC" type="ptFunction" line="1030">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="MESSAGEBOX" args=" " scope="PUBLIC" type="ptFunction" line="1037">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="CREATEOLEOBJECT" args=" " scope="PUBLIC" type="ptFunction" line="1044">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="GETOLEOBJECT" args=" " scope="PUBLIC" type="ptFunction" line="1095">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OLERELEASEOBJECT" args=" " scope="PUBLIC" type="ptFunction" line="1157">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OleSetProperty" args="<pDisp>, <DispID>, <pDispParams> " scope="PUBLIC" type="ptCFunction" line="1166">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OleInvoke" args="<pDisp>, <DispID>, <pDispParams> " scope="PUBLIC" type="ptCFunction" line="1204">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="OleGetProperty" args="<pDisp>, <DispID>, <pDispParams> " scope="PUBLIC" type="ptCFunction" line="1221">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="TOLEAUTOX_ONERROR" args=" " scope="PUBLIC" type="ptFunction" line="1238">
+   <tag filename="C:\Sistemas Fivewin\ConsCadNFe\w32ole.prg" name="UnInitialize_Ole" args=" " scope="PUBLIC" type="ptProcedure" line="1441">
+</taglist>
